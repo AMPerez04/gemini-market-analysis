@@ -121,7 +121,7 @@ export default function DemoPage() {
         <div className="flex flex-col sm:flex-row gap-4 mb-8 w-full max-w-md">
           <Input
             type="text"
-            placeholder="Enter Startup Name"
+            placeholder="Enter Industry"
             value={startupName}
             onChange={(e) => setStartupName(e.target.value)}
             className="flex-1"
