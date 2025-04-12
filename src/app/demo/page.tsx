@@ -1,13 +1,14 @@
 "use client";
 
+import { useCallback, useState } from "react";
 import Image from "next/image";
-import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { GaugeChart } from "./components/GaugeChart";
+import generateContent from "./api/geminiapi";
 
 // Container and item variants for general fade and staggered animations.
 const containerVariants = {
@@ -52,8 +53,30 @@ const AnimatedBar = ({ label, value, percentage }: AnimatedBarProps) => {
   );
 };
 
+// Helper function to parse Gemini's response string.
+// It removes the markdown code fences (```json and ```) and parses the JSON.
+function parseGeminiResponse(
+  responseText: string
+): {
+  tam: string;
+  sam: string;
+  som: string;
+  competitor: string;
+  startupGrade: string;
+} {
+  const cleanedText = responseText
+    .replace(/^```json\s*/, "")
+    .replace(/\s*```$/, "");
+  console.log(cleanedText);
+  try {
+    return JSON.parse(cleanedText);
+  } catch (error) {
+    throw new Error("Failed to parse Gemini response: " + error);
+  }
+}
+
 export default function DemoPage() {
-  // State for user input and simulated insights.
+  // State for user input and insights.
   const [startupName, setStartupName] = useState("");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<{
@@ -64,25 +87,52 @@ export default function DemoPage() {
     startupGrade: string;
   } | null>(null);
 
-  // Simulate generating insights.
-  const handleGetInsights = () => {
+  // Memoized function to get insights from Gemini.
+  const handleGetInsights = useCallback(async () => {
     if (!startupName.trim()) return;
     setLoading(true);
     setResults(null);
 
-    // Simulate an asynchronous operation.
-    setTimeout(() => {
-      const dummyData = {
-        tam: "1B",
-        sam: "500M",
-        som: "100M",
-        competitor: "Competitor X is the current market leader.",
-        startupGrade: "A+",
-      };
-      setResults(dummyData);
+    // Construct a Gemini prompt to analyze the startup.
+    const prompt = `You are a seasoned market research expert. Analyze the startup "${startupName}" and provide market insights. Consider the following:
+1. Total Addressable Market (TAM): Estimate the overall revenue opportunity, formatted as a value like "1B" if in billions.
+2. Serviceable Available Market (SAM): Estimate the portion of TAM that is realistically addressable (e.g., "500M" for 500 million).
+3. Serviceable Obtainable Market (SOM): Estimate the share of SAM the startup can obtain, formatted similarly.
+4. Competitor Analysis: Briefly describe major competitors or the competitive landscape.
+5. Startup Grade: Based on potential, risk, and innovation, assign a grade on a scale from F to A+.
+
+Return your output strictly as JSON with exactly these keys:
+{
+  "tam": "<TAM value>",
+  "sam": "<SAM value>",
+  "som": "<SOM value>",
+  "competitor": "<Competitor analysis>",
+  "startupGrade": "<Letter grade (e.g., A+)>"
+}
+Only output the JSON without any extra commentary.
+Do not include any markdown code fences or other formatting.`;
+
+    try {
+      const rawData = await generateContent([{ text: prompt }]) as any;
+      console.log("Gemini Flash raw response:", rawData);
+      // Parse the text response (with markdown formatting) into JSON.
+      const parsedData = parseGeminiResponse(rawData.candidates[0].content.parts[0].text);
+      console.log("Parsed Gemini response:", parsedData);
+      console.log("Parsed Gemini Flash response:", parsedData);
+
+      
+      setResults(parsedData);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Error generating content:", error.message);
+      } else {
+        console.error("Unexpected error:", error);
+      }
+      // Optionally update state to indicate an error.
+    } finally {
       setLoading(false);
-    }, 1500);
-  };
+    }
+  }, [startupName]);
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
