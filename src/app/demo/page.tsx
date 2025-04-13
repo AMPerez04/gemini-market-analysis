@@ -162,10 +162,9 @@ export default function DemoPage() {
   }
 
 
-  const furtherResearchLinks = (researchLinks: string) => {
-    if (!researchLinks) return [];
-    const fr = researchLinks?.trim();
-    // Check if it's a valid JSON array (starts with "[")
+  const furtherResearchLinks = (researchLinks: unknown) => {
+    if (typeof researchLinks !== "string") return [];
+    const fr = researchLinks.trim();
     if (fr.startsWith("[")) {
       try {
         return JSON.parse(fr);
@@ -174,10 +173,10 @@ export default function DemoPage() {
         return [];
       }
     } else {
-      // Otherwise, assume it's a comma-separated list
       return fr.split(",").map(link => link.trim());
     }
   };
+  
 
   return (
     <div className=" bg-background text-foreground flex flex-col">

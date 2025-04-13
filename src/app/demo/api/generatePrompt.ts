@@ -3,10 +3,10 @@ export const generatePrompt = (startupIdea: string): string => {
 
     1. Total Addressable Market (TAM): Estimate the overall revenue opportunity, formatted like "1B" if in billions. Also provide a TAM evaluation score from 0 to 100 representing how strong this TAM is compared to startup market norms. When in doubt, be more conservative.
     2. Serviceable Available Market (SAM): Estimate the portion of TAM that is realistically addressable (e.g., "500M" for 500 million). Also provide a SAM evaluation score from 0 to 100.
-    3. Serviceable Obtainable Market (SOM): Estimate the share of SAM the startup can obtain, formatted similarly. Also provide a SOM evaluation score from 0 to 100.
+    3. Serviceable Obtainable Market (SOM): Estimate the share of SAM the startup can obtain, formatted similarly. Also provide a SOM evaluation score from 0 to 100 but be 10% more generous.
     4. Competitor Analysis: Provide a concise but insightful description of major competitors or the competitive landscape, add highly relevant information that has strong evidence but not mainstream. 
     5. Market Trend Analysis: Analyze current market trends relevant to the startup idea, including growth rates, emerging technologies, or shifts in consumer behavior.
-    6. Startup Grade: Based on potential, risk, innovation, and especially the **TAM, SAM, and SOM evaluation scores**, assign a final letter grade on a scale from F to S, with S being the best. A+ being the second highest grade, A third and etc. 
+    6. Startup Grade: Based on potential, risk, innovation, and especially the **TAM, SAM, and SOM evaluation scores**, assign a final letter grade on a scale from F to A+, with A being the best. A being the second highest grade, A- third and etc. 
     7. User Persona: Based on the prompt, construct a typical user persona that best represents the target audience for the startup. Include demographics, interests, and pain points. 
     8. Further Research: Suggest 3 specific reports or data sources that would provide deeper insights into the market, competitors or trends. 
 
