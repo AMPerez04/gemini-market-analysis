@@ -161,7 +161,8 @@ export default function DemoPage() {
 
 
   const furtherResearchLinks = (researchLinks: string) => {
-    const fr = researchLinks.trim();
+    if (!researchLinks) return [];
+    const fr = researchLinks?.trim();
     // Check if it's a valid JSON array (starts with "[")
     if (fr.startsWith("[")) {
       try {
@@ -195,6 +196,7 @@ export default function DemoPage() {
         <div className="flex flex-row gap-2 mb-8 w-full max-w-xl">
           <div className="flex flex-col w-full">
             <Input
+              suppressHydrationWarning
               type="text"
               placeholder="Enter Startup Idea"
               value={startupName}

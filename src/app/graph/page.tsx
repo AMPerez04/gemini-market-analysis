@@ -41,27 +41,19 @@ interface GraphData {
 */
 async function fetchGeminiGraphData(query: string): Promise<GraphData> {
   try {
-    const apiKey = process.env.NEXT_PUBLIC_GEMINI_FLASH_API_KEY;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-    const payload = {
-      contents: [
-        {
-          parts: [
-            {
-              text: `For the topic "${query}", please return a bullet list of related keywords with a brief note for each, and specify their connection type relative to the topic. The connection type must be one of 'primary', 'secondary', or 'tertiary'. Use the following format exactly:
+    const parts = [
+      {
+        text: `For the topic "${query}", please return a bullet list of related keywords with a brief note for each, and specify their connection type relative to the topic. The connection type must be one of 'primary', 'secondary', or 'tertiary'. Use the following format exactly:
   * **Keyword** (primary): Note
 If a keyword should be a secondary connection, replace 'primary' with 'secondary', and similarly for tertiary.
 Return only the bullet list.`,
-            },
-          ],
-        },
-      ],
-    };
+      },
+    ];
 
-    const res = await fetch(url, {
+    const res = await fetch("/api/gemini", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ parts }),
     });
     if (!res.ok) throw new Error("Gemini API request failed");
     const data = await res.json();
