@@ -175,6 +175,7 @@ export default function DemoPage() {
         <div className="flex flex-row gap-2 mb-8 w-full max-w-xl">
           <div className="flex flex-col w-full">
             <Input
+              suppressHydrationWarning
               type="text"
               placeholder="Enter Startup Idea"
               value={startupName}
@@ -250,15 +251,17 @@ export default function DemoPage() {
                   {displayName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                 </motion.h2>
 
-                <div className="flex flex-row">
-                <motion.div variants={itemVariants} className="flex flex-col items-center">
+                <div className="flex flex-row mb-2">
+                <motion.div variants={itemVariants} className="flex flex-col items-center mb-">
                   <p className="text-sm font-medium mb-0">TAM: {results.tam}</p>
                   <GaugeChart grade={getLetterGrade(results.tamEvaluation)} />
                 </motion.div>
+      
                 <motion.div variants={itemVariants} className="flex flex-col items-center">
                   <p className="text-sm font-medium mb-0">SAM: {results.sam}</p>
                   <GaugeChart grade={getLetterGrade(results.samEvaluation)} />
                 </motion.div>
+
                 <motion.div variants={itemVariants} className="flex flex-col items-center">
                   <p className="text-sm font-medium mb-0">SOM: {results.som}</p>
                   <GaugeChart grade={getLetterGrade(results.somEvaluation)} />
@@ -270,7 +273,7 @@ export default function DemoPage() {
                 </motion.div>
                 </div>
 
-                <motion.div variants={itemVariants} className="text-left space-y-2">
+                <motion.div variants={itemVariants} className="text-left space-y-2 mb-4">
                   <p>
                     <strong>Competitor Insight:</strong> {results.competitor}
                   </p>

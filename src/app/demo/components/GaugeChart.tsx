@@ -20,19 +20,34 @@ export function GaugeChart({ grade }: GaugeChartProps) {
         return 1.0;
       case "A":
         return 0.9;
-      case "B":
+      case "A-":
+        return 0.85;
       case "B+":
         return 0.8;
-      case "C":
+      case "B":
+        return 0.75;
+      case "B-":
+        return 0.7;
+      case "C+":
         return 0.6;
+      case "C":
+        return 0.55;
+      case "C-":
+        return 0.50;
+      case "D+":
+        return 0.45;
       case "D":
-        return 0.4;
+        return 0.40;
+      case "D-":
+        return 0.35;
       case "F":
         return 0.0;
       default:
-        return 0.7; // fallback if unexpected grade
+        return 0.5; // fallback to average
     }
   }
+
+
 
   const fraction = gradeToFraction(grade);
 
