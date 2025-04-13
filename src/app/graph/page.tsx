@@ -1,14 +1,15 @@
 "use client";
 
-import Image from "next/image";
-import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import dynamic from "next/dynamic";
-
+import { Card } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
+import { useTheme } from "next-themes";
 // Dynamically load ForceGraph2D on the client.
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), { ssr: false });
+import type { ForceGraphMethods } from 'react-force-graph-2d';
 
 // -- Types for nodes and links --
 interface GraphNode {
@@ -17,6 +18,8 @@ interface GraphNode {
   note: string;
   relevance: number;
   connectionType?: "primary" | "secondary" | "tertiary";
+  x?: number; // Added for graph library compatibility
+  y?: number; // Added for graph library compatibility
 }
 
 interface GraphLink {
@@ -121,12 +124,17 @@ Return only the bullet list.`,
 }
 
 export default function DemoPage() {
+  const { theme } = useTheme();
+
+
   const [query, setQuery] = useState("");
   const [graphData, setGraphData] = useState<GraphData | null>(null);
   const [loading, setLoading] = useState(false);
-  const fgRef = useRef<any>(null);
+  const fgRef = useRef<ForceGraphMethods>(null as unknown as ForceGraphMethods);
+  
 
   const handleGenerateGraph = async () => {
+    setGraphData(null);
     if (!query.trim()) return;
     setLoading(true);
     const data = await fetchGeminiGraphData(query);
@@ -137,7 +145,7 @@ export default function DemoPage() {
 
 
   return (
-    <div className="min-h-screen bg-transparent text-foreground flex flex-col">
+    <div className="bg-transparent text-foreground flex flex-col">
 
 
       {/* Main Content */}
@@ -149,42 +157,113 @@ export default function DemoPage() {
           Enter a topic below. Our system will call the Gemini API to generate related keywords,
           notes, and connection types, then dynamically build a network graph.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 mb-8 w-full max-w-md">
-          <Input
-            type="text"
-            placeholder="Enter search topic"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="flex-1"
-          />
-          <Button onClick={handleGenerateGraph} disabled={loading} size="lg">
-            {loading ? "Loading..." : "Generate Graph"}
+
+        <div className="flex flex-row gap-2 mb-8 w-full max-w-xl">
+          <div className="flex flex-col w-full">
+            <Input
+              suppressHydrationWarning
+              type="text"
+              placeholder="Enter Research Topic"
+              value={query}
+              onChange={(e) => {
+                if (e.target.value.length <= 100) {
+                  setQuery(e.target.value);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !loading) {
+                  handleGenerateGraph();
+                }
+              }}
+              className="h-10 placeholder:text-foreground bg-muted"
+              style={{ backgroundColor: theme === 'dark' ? "#001220" : "var(--muted)" }}
+            />
+            <div className="text-xs text-foreground text-left mt-1">
+              {query.length}/100 characters
+            </div>
+          </div>
+
+          <Button
+            onClick={handleGenerateGraph}
+            disabled={loading}
+            size="lg"
+            className="h-10 self-start sm:self-auto"
+          >
+            {loading ? "Analyzing..." : "Generate Graph"}
           </Button>
         </div>
 
         {/* Render the dynamic graph if data exists */}
         {graphData && (
           <section className="w-full max-w-4xl mt-12">
-            <h2 className="text-3xl font-bold mb-4">Dynamic Gemini Graph</h2>
-            <div className="border border-gray-300 h-[70vh]">
-  <ForceGraph2D
-    ref={fgRef}
-    graphData={graphData}
-    nodeId="id"
-    nodeLabel={(node) => `${(node as GraphNode).id}: ${(node as GraphNode).note}`}
-    nodeAutoColorBy="connectionType"
-    linkColor={(link) => {
-      const graphLink = link as GraphLink;
-      if (graphLink.type === "primary") return "red";
-      if (graphLink.type === "secondary") return "orange";
-      return "gray";
-    }}
-    linkDirectionalParticles={2}
-    linkDirectionalParticleSpeed={0.005}
-  />
-</div>
-
+            <Card>
+              <CardContent
+                className="relative w-full h-[70vh] overflow-hidden flex justify-center items-center"
+              >
+                <div className="w-full h-full">
+                  <ForceGraph2D
+                    ref={fgRef}
+                    width={undefined} // Allow the canvas to auto-size
+                    height={undefined}
+                    graphData={graphData}
+                    nodeId="id"
+                    nodeLabel={(node) => `${(node as GraphNode).id}: ${(node as GraphNode).note}`}
+                    nodeAutoColorBy="connectionType"
+                    linkColor={(link) => {
+                      const graphLink = link as GraphLink;
+                      if (graphLink.type === "primary") return "red";
+                      if (graphLink.type === "secondary") return "orange";
+                      return "gray";
+                    }}
+                    linkDirectionalParticles={2}
+                    nodeCanvasObject={(node, ctx, globalScale) => {
+                      const graphNode = node as GraphNode;
+                    
+                      const label = graphNode.id;
+                      const fontSize = 12 / globalScale;
+                      const radius = 5; // node size
+                    
+                      // Draw the node as a circle
+                      ctx.beginPath();
+                      ctx.arc(graphNode.x!, graphNode.y!, radius, 0, 2 * Math.PI, false);
+                      ctx.fillStyle = graphNode.connectionType === "primary"
+                        ? "red"
+                        : graphNode.connectionType === "secondary"
+                        ? "orange"
+                        : "gray";
+                      ctx.fill();
+                      ctx.closePath();
+                    
+                      // Draw label background
+                      ctx.font = `${fontSize}px Sans-Serif`;
+                      ctx.textAlign = "center";
+                      ctx.textBaseline = "bottom";
+                    
+                      const textWidth = ctx.measureText(label).width;
+                      const padding = 2;
+                    
+                      ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+                      ctx.fillRect(
+                        graphNode.x! - textWidth / 2 - padding,
+                        graphNode.y! - radius - fontSize - padding,
+                        textWidth + padding * 2,
+                        fontSize + padding
+                      );
+                    
+                      // Draw the label text
+                      ctx.fillStyle = "white";
+                      ctx.fillText(label, graphNode.x!, graphNode.y! - radius - 2);
+                    }}
+                    
+                    linkDirectionalParticleSpeed={0.005}
+                    cooldownTicks={100}
+                    onEngineStop={() => fgRef.current?.zoomToFit(200)}
+                  />
+                </div>
+              </CardContent>
+            </Card>
           </section>
+
         )}
       </main>
 

@@ -23,12 +23,13 @@ const Header: React.FC = () => {
           </Link>
         </div>
 
-        <div className="flex items-center gap-4 text-2xl font-bold">
-          <Link href="/" className="hover:text-primary transition-colors">
-            Features
+        <div className="flex items-center gap-6 text-2xl font-bold">
+   
+          <Link href="/graph" className="hover:text-primary transition-colors">
+            Market Discovery Tool
           </Link>
           <Link href="/demo" className="hover:text-primary transition-colors">
-            Try the Demo
+            AI Demo
           </Link>
 
           {/* Theme toggle */}
