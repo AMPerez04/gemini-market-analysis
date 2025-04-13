@@ -1,32 +1,25 @@
-import Image from "next/image";
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
+
+
 export default function Home() {
+
+
+
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen text-foreground flex flex-col ">
       {/* Header */}
-      <header className="py-6 px-8">
-        <nav className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Image src="/next.svg" alt="Logo" width={40} height={40} />
-            <span className="text-lg font-bold tracking-tight text-primary">InsightSpark AI</span>
-          </div>
-          <div className="flex gap-4 text-sm">
-            <a href="#features" className="hover:text-primary transition-colors">Features</a>
-            <a href="#investors" className="hover:text-primary transition-colors">Why It Wins</a>
-            <a href="#contact" className="hover:text-primary transition-colors">Contact</a>
-          </div>
-        </nav>
-      </header>
 
       {/* Hero Section */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 text-center bg-gradient-to-b from-muted/40 to-background pb-16 pt-12">
-        <Badge className="mb-4" variant="secondary">Powered by Google Gemini + Next.js</Badge>
+      <main className="flex-1 flex flex-col items-center justify-center px-4 text-center  pb-16 pt-12 z-10">
+        <Badge className="mb-4" variant="default">Powered by Google Gemini + Next.js</Badge>
         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl text-primary">
-          Validate Market Potential in Seconds
+          Verify Market Potential in Seconds
         </h1>
         <p className="text-lg text-muted-foreground max-w-xl mb-8">
           Instantly generate TAM/SAM/SOM insights, benchmark competitors, and grade startup ideas with AI.
@@ -48,11 +41,11 @@ export default function Home() {
       </main>
 
       {/* Features Section */}
-      <section id="features" className="py-20 px-8 bg-muted/50">
+      <section id="features" className="py-20 px-8 z-10">
         <div className="max-w-5xl mx-auto text-center mb-12">
           <h2 className="text-3xl font-bold mb-4 text-primary">What You&apos;ll Get</h2>
           <p className="text-muted-foreground text-lg">
-            A full-stack market research engine that VCs will love.
+            A full-stack market research engine that VCs love.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -66,8 +59,8 @@ export default function Home() {
               desc: "Score your idea across defensibility, scale, timing, and more.",
             },
             {
-              title: "Competitor Intelligence",
-              desc: "Get side-by-side comparisons, traction stats, and differentiation.",
+              title: "Competitor Analysis",
+              desc: "Get instant research, traction stats, and differentiation opportunities.",
             },
           ].map(({ title, desc }) => (
             <Card key={title} className="bg-card shadow-md">
@@ -81,25 +74,14 @@ export default function Home() {
       </section>
 
       {/* Investor CTA */}
-      <section id="investors" className="py-24 px-8 text-center bg-gradient-to-b from-background via-muted/50 to-background">
+      <section id="investors" className="py-24 px-8 text-center z-10">
         <h2 className="text-3xl font-bold mb-4 text-primary">Tailored for Investors & Innovation Teams</h2>
         <p className="text-muted-foreground max-w-2xl mx-auto mb-8 text-lg">
-          InsightSpark isn’t just a tool — it’s a pitch-perfect launchpad designed to accelerate internal validation and make due diligence effortless.
+          VerifAI isn’t just a tool, it’s a pitch-perfect launchpad designed to accelerate internal validation and make due diligence effortless.
         </p>
-        <Button className="bg-indigo-600 hover:bg-indigo-700 text-white" size="lg">Request Investor Deck</Button>
       </section>
 
-      {/* Footer */}
-      <footer className="py-6 px-8 border-t mt-12">
-        <div className="flex flex-col sm:flex-row items-center justify-between max-w-5xl mx-auto text-sm text-muted-foreground">
-          <span>© {new Date().getFullYear()} InsightSpark. All rights reserved.</span>
-          <div className="flex gap-4 mt-2 sm:mt-0">
-            <a href="https://nextjs.org" className="hover:underline">Next.js</a>
-            <a href="https://ui.shadcn.com" className="hover:underline">shadcn/ui</a>
-            <a href="https://tailwindcss.com" className="hover:underline">Tailwind CSS</a>
-          </div>
-        </div>
-      </footer>
+
     </div>
   );
 }

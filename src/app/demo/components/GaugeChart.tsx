@@ -67,20 +67,23 @@ export function GaugeChart({ grade }: GaugeChartProps) {
         />
 
         {/* Foreground arc (animates) */}
-        <motion.circle
-          cx="60"
-          cy="60"
-          r={radius}
-          fill="none"
-          stroke="#6366f1" // Indigo-500
-          strokeWidth="10"
-          strokeDasharray={arcLength}
-          strokeDashoffset={arcLength} // Start hidden
-          transform="rotate(135 60 60)"
-          strokeLinecap="round"
-          animate={{ strokeDashoffset: fillOffset }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-        />
+        {fraction > 0 && (
+          <motion.circle
+            cx="60"
+            cy="60"
+            r={radius}
+            fill="none"
+            stroke="#6366f1"
+            strokeWidth="10"
+            strokeDasharray={arcLength}
+            strokeDashoffset={arcLength}
+            transform="rotate(135 60 60)"
+            strokeLinecap="round"
+            animate={{ strokeDashoffset: fillOffset }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+          />
+        )}
+
 
         {/* Grade text in the center */}
         <text
@@ -89,16 +92,16 @@ export function GaugeChart({ grade }: GaugeChartProps) {
           textAnchor="middle"
           dy="0.35em"
           fontSize="20"
-          fill="#111827"
+          fill="var(--foreground)"
         >
           {grade}
         </text>
       </svg>
 
       {/* F label at bottom-left */}
-      <div className="absolute left-1 bottom-1 text-xs text-muted-foreground">F</div>
+      <div className="absolute left-6 bottom-5 text-xs text-muted-foreground">F</div>
       {/* A+ label at bottom-right */}
-      <div className="absolute right-1 bottom-1 text-xs text-muted-foreground">A+</div>
+      <div className="absolute right-4 bottom-5 text-xs text-muted-foreground">A+</div>
     </div>
   );
 }
