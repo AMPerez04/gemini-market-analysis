@@ -57,7 +57,7 @@ Return only the bullet list.`,
         },
       ],
     };
-    
+
     const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -146,27 +146,8 @@ export default function DemoPage() {
 
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
-      {/* Header */}
-      <header className="py-6 px-8">
-        <nav className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Image src="/next.svg" alt="Logo" width={40} height={40} />
-            <span className="text-lg font-bold tracking-tight">InsightSpark AI</span>
-          </div>
-          <div className="flex gap-4 text-sm">
-            <Link href="/" className="hover:text-primary transition-colors">
-              Home
-            </Link>
-            <Link href="/demo" className="hover:text-primary transition-colors">
-              Demo
-            </Link>
-            <Link href="/contact" className="hover:text-primary transition-colors">
-              Contact
-            </Link>
-          </div>
-        </nav>
-      </header>
+    <div className="min-h-screen bg-transparent text-foreground flex flex-col">
+
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col items-center justify-center px-4 text-center">
@@ -201,23 +182,6 @@ export default function DemoPage() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="py-6 px-8 border-t mt-12">
-        <div className="flex flex-col sm:flex-row items-center justify-between max-w-5xl mx-auto text-sm text-muted-foreground">
-          <span>© {new Date().getFullYear()} InsightSpark. All rights reserved.</span>
-          <div className="flex gap-4 mt-2 sm:mt-0">
-            <a href="https://nextjs.org" className="hover:underline">
-              Next.js
-            </a>
-            <a href="https://ui.shadcn.com" className="hover:underline">
-              shadcn/ui
-            </a>
-            <a href="https://tailwindcss.com" className="hover:underline">
-              Tailwind CSS
-            </a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
