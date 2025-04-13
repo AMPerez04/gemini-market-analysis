@@ -2,10 +2,6 @@ interface ContentPart {
   text: string;
 }
 
-interface GenerateContentRequest {
-  parts: ContentPart[];
-}
-
 // Match the fields returned by your Gemini API proxy
 interface GeminiResponse {
   tam?: string;
