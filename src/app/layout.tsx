@@ -42,7 +42,7 @@ export default function RootLayout({
         }
           `}
         </style>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <div className="relative flex min-h-screen flex-col">
             <BlobBackground />
             <Header />
