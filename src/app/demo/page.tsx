@@ -46,6 +46,8 @@ function parseGeminiResponse(
   startupGrade: string;
   error: string | undefined;
   trend: string;
+  userPersona: string;
+  furtherResearch: string;
 } {
   const cleanedText = responseText
     .replace(/^```json\s*/, "")
@@ -87,6 +89,8 @@ export default function DemoPage() {
     somEvaluation: number;
     competitor: string;
     startupGrade: string;
+    userPersona: string;
+    furtherResearch: string;
     error?: string;
     trend: string;
   } | null>(null);
@@ -155,6 +159,23 @@ export default function DemoPage() {
     return "F";
   }
 
+
+  const furtherResearchLinks = (researchLinks: string) => {
+    if (!researchLinks) return [];
+    const fr = researchLinks?.trim();
+    // Check if it's a valid JSON array (starts with "[")
+    if (fr.startsWith("[")) {
+      try {
+        return JSON.parse(fr);
+      } catch (error) {
+        console.error("Error parsing JSON:", error);
+        return [];
+      }
+    } else {
+      // Otherwise, assume it's a comma-separated list
+      return fr.split(",").map(link => link.trim());
+    }
+  };
 
   return (
     <div className=" bg-background text-foreground flex flex-col">
@@ -283,6 +304,35 @@ export default function DemoPage() {
                     <strong>Trend Analysis:</strong> {results.trend}
                   </p>
                 </motion.div>
+                <motion.div variants={itemVariants} className="text-left space-y-2">
+                  <p>
+                    <strong>User Persona:</strong> {results.userPersona}
+                  </p>
+                </motion.div>
+                
+             
+
+             <motion.div variants={itemVariants} className="text-left space-y-2">
+              <p>
+                <strong>Further Research:</strong>
+              </p>
+              <ul className="list-disc pl-5">
+                {furtherResearchLinks(results.furtherResearch).map((link: string, index: number) => (
+                  <li key={index}>
+                    <a
+                      href={link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      {link}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+
               </CardContent>
             </Card>
           </motion.div>

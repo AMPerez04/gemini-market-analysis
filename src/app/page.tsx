@@ -32,7 +32,11 @@ export default function Home() {
               Try Demo
             </Button>
           </Link>
-          <Button variant="outline" size="lg">See How It Works</Button>
+          <Link href="/graph">
+            <Button variant="outline" size="lg">
+              See How It Works
+            </Button>
+          </Link>
         </div>
       </main>
 
