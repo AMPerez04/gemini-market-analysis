@@ -22,19 +22,19 @@ export default function Home() {
           Verify Market Potential in Seconds
         </h1>
         <p className="text-lg text-muted-foreground max-w-xl mb-8">
-          Instantly generate TAM/SAM/SOM insights, benchmark competitors, and grade startup ideas with AI.
+          Instantly generate industry insights, benchmark competitors, and grade startup ideas with AI.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 pb-4">
           
 
           <Link href="/demo">
             <Button className="bg-indigo-600 hover:bg-indigo-700 text-white" size="lg">
-              Try Demo
+              Test your idea
             </Button>
           </Link>
           <Link href="/graph">
             <Button variant="outline" size="lg">
-              See How It Works
+              Analyze Market Trends
             </Button>
           </Link>
         </div>
@@ -59,7 +59,7 @@ export default function Home() {
               desc: "Score your idea across defensibility, scale, timing, and more.",
             },
             {
-              title: "Competitor Analysis",
+              title: "Competitor Analysis + More",
               desc: "Get instant research, traction stats, and differentiation opportunities.",
             },
           ].map(({ title, desc }) => (
