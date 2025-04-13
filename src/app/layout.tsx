@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/ui/header"
 import Footer from "@/components/ui/footer";
+import { ThemeProvider } from 'next-themes';
+import BlobBackground from "@/components/ui/BlobBackground";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,20 +27,31 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+
       >
-        <div className="flex min-h-screen flex-col">
-          <Header />
-          <div className="flex flex-1 items-center justify-center">
-            <main className="w-full">{children}</main>
-          </div>
-          <Footer />
+        <style>
+          {`
+        ::-webkit-scrollbar {
+          display: none;
+        }
+          `}
+        </style>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <div className="flex min-h-screen flex-col">
+        <BlobBackground />
+        <Header />
+        <div className="flex flex-1 items-center justify-center">
+          <main className="w-full">{children}</main>
         </div>
+        <Footer />
+          </div>
+        </ThemeProvider>
       </body>
 
     </html>

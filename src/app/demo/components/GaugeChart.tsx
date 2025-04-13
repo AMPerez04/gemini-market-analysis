@@ -92,7 +92,7 @@ export function GaugeChart({ grade }: GaugeChartProps) {
           textAnchor="middle"
           dy="0.35em"
           fontSize="20"
-          fill="#111827"
+          fill="var(--foreground)"
         >
           {grade}
         </text>

@@ -1,7 +1,11 @@
 // VerifAILogo.tsx
 import React from "react";
 
-const VerifAILogo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+interface VerifAILogoProps extends React.SVGProps<SVGSVGElement> {
+  theme?: "light" | "dark";
+}
+
+const VerifAILogo: React.FC<VerifAILogoProps> = ({ theme = "light", ...props }) => (
   <svg
     width="200"
     height="60"
@@ -15,7 +19,7 @@ const VerifAILogo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
           font-family: 'Segoe UI', sans-serif;
           font-size: 32px;
           font-weight: bold;
-          fill: #2E3A59;
+          fill: ${theme === "dark" ? "#ffffff" : "#2E3A59"};
         }
         .ai {
           fill: #4F8AFA;

@@ -1,18 +1,24 @@
-
+"use client";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-
+import { useTheme } from "next-themes";
+import BlobSceneLight from "@/components/ui/BlobSceneLight";
+import BlobSceneDark from "@/components/ui/BlobSceneDark";
 
 export default function Home() {
+  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen text-foreground flex flex-col ">
       {/* Header */}
 
-
       {/* Hero Section */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 text-center bg-gradient-to-b from-muted/40 to-background pb-16 pt-12">
+      <main className="flex-1 flex flex-col items-center justify-center px-4 text-center  pb-16 pt-12 z-10">
         <Badge className="mb-4" variant="secondary">Powered by Google Gemini + Next.js</Badge>
         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl text-primary">
           Verify Market Potential in Seconds
@@ -33,7 +39,7 @@ export default function Home() {
       </main>
 
       {/* Features Section */}
-      <section id="features" className="py-20 px-8 bg-muted/50">
+      <section id="features" className="py-20 px-8 z-10">
         <div className="max-w-5xl mx-auto text-center mb-12">
           <h2 className="text-3xl font-bold mb-4 text-primary">What You&apos;ll Get</h2>
           <p className="text-muted-foreground text-lg">
@@ -66,12 +72,11 @@ export default function Home() {
       </section>
 
       {/* Investor CTA */}
-      <section id="investors" className="py-24 px-8 text-center bg-gradient-to-b from-background via-muted/50 to-background">
+      <section id="investors" className="py-24 px-8 text-center z-10">
         <h2 className="text-3xl font-bold mb-4 text-primary">Tailored for Investors & Innovation Teams</h2>
         <p className="text-muted-foreground max-w-2xl mx-auto mb-8 text-lg">
-          InsightSpark isn’t just a tool — it’s a pitch-perfect launchpad designed to accelerate internal validation and make due diligence effortless.
+          VerifAI isn’t just a tool — it’s a pitch-perfect launchpad designed to accelerate internal validation and make due diligence effortless.
         </p>
-        <Button className="bg-indigo-600 hover:bg-indigo-700 text-white" size="lg">Request Investor Deck</Button>
       </section>
 
 

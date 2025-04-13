@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { useTheme } from "next-themes";
 import { GaugeChart } from "./components/GaugeChart";
 import generateContent from "./api/geminiapi";
 import { generatePrompt } from "./api/generatePrompt";
-import FreeformBackground from "@/components/ui/FreeformBackground";
+import WaveBackgroundDark from "./components/WaveBackgroundDark";
+import WaveBackgroundLight from "./components/WaveBackgroundLight";
 
 // Updated container variants to stagger children one at a time.
 const containerVariants = {
@@ -69,6 +70,10 @@ const loaderPhrases = [
 
 export default function DemoPage() {
   // State for user input and insights.
+  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const [startupName, setStartupName] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -153,7 +158,10 @@ export default function DemoPage() {
 
   return (
     <div className=" bg-background text-foreground flex flex-col">
-      <FreeformBackground primaryColor="#3b82f6" />
+      {/* <WaveBackgroundDark /> */}
+      {mounted && (theme === "dark" ? <WaveBackgroundDark /> : <WaveBackgroundLight />)}
+
+
 
       {/* Demo Main Content */}
       <main className="flex-1 flex flex-col items-center justify-center px-4 text-center relative z-10">
@@ -171,7 +179,7 @@ export default function DemoPage() {
               placeholder="Enter Startup Idea"
               value={startupName}
               onChange={(e) => {
-                if (e.target.value.length <= 50) {
+                if (e.target.value.length <= 100) {
                   setStartupName(e.target.value);
                 }
               }}
@@ -180,10 +188,11 @@ export default function DemoPage() {
                   handleGetInsights();
                 }
               }}
-              className="h-10 bg-muted"
+              className="h-10 placeholder:text-foreground bg-muted"
+              style={{ backgroundColor: theme === 'dark' ? "#001220":"var(--muted)" }}
             />
             <div className="text-xs text-foreground text-left mt-1">
-              {startupName.length}/50 characters
+              {startupName.length}/100 characters
             </div>
           </div>
 

@@ -1,20 +1,18 @@
 // components/Footer.tsx
 import React from "react";
+import { Badge } from "@/components/ui/badge";
 
 const Footer: React.FC = () => {
   return (
-    <footer className="py-6 px-8  mt-12 z-10 bg-foreground">
-      <div className="flex flex-col sm:flex-row items-center justify-between max-w-5xl mx-auto text-sm text-muted-foreground">
-        <span>© {new Date().getFullYear()} InsightSpark. All rights reserved.</span>
+    <footer className="py-6 px-8  mt-12 z-10 bg-var(--footer)">
+      <div className="flex flex-col sm:flex-row items-center justify-between mx-auto text-sm text-foreground">
+        <span>© {new Date().getFullYear()} VerifAI. All rights reserved.</span>
         <div className="flex gap-4 mt-2 sm:mt-0">
-          <a href="https://nextjs.org" className="hover:underline" target="_blank" rel="noopener noreferrer">
-            Next.js
-          </a>
-          <a href="https://ui.shadcn.com" className="hover:underline" target="_blank" rel="noopener noreferrer">
-            shadcn/ui
-          </a>
-          <a href="https://tailwindcss.com" className="hover:underline" target="_blank" rel="noopener noreferrer">
-            Tailwind CSS
+            <a href="https://www.linkedin.com/in/austin-m-perez/" className="hover:underline " target="_blank" rel="noopener noreferrer">
+            Austin's Linkedin
+            </a>
+          <a href="https://www.linkedin.com/in/reyyu/" className="hover:underline" target="_blank" rel="noopener noreferrer">
+            Rey's Linkedin
           </a>
         </div>
       </div>
