@@ -1,17 +1,15 @@
 "use client";
-import { useState, useEffect } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { useTheme } from "next-themes";
-import BlobSceneLight from "@/components/ui/BlobSceneLight";
-import BlobSceneDark from "@/components/ui/BlobSceneDark";
+
+
 
 export default function Home() {
-  const { theme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+
+
 
   return (
     <div className="min-h-screen text-foreground flex flex-col ">
