@@ -59,15 +59,19 @@ function parseGeminiResponse(
   responseText: string
 ): {
   tam: string;
+  tamEvaluation: number;
   sam: string;
+  samEvaluation: number;
   som: string;
+  somEvaluation: number;
   competitor: string;
   startupGrade: string;
+  error: string | undefined;
+  trend: string;
 } {
   const cleanedText = responseText
     .replace(/^```json\s*/, "")
     .replace(/\s*```$/, "");
-  console.log(cleanedText);
   try {
     return JSON.parse(cleanedText);
   } catch (error) {
@@ -94,11 +98,20 @@ export default function DemoPage() {
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const [results, setResults] = useState<{
     tam: string;
+    tamEvaluation: number;
     sam: string;
+    samEvaluation: number;
     som: string;
+    somEvaluation: number;
     competitor: string;
     startupGrade: string;
+    error?: string;
+    trend: string;
   } | null>(null);
+  const [parsedTAM, setParsedTAM] = useState<number>(1);
+  const [parsedSAM, setParsedSAM] = useState<number>(1);
+  const [parsedSOM, setParsedSOM] = useState<number>(1);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     if (!loading) return;
@@ -107,7 +120,7 @@ export default function DemoPage() {
     }, 2000);
     return () => clearInterval(interval);
   }, [loading]);
-  
+
 
   // Memoized function to get insights from Gemini.
   const handleGetInsights = useCallback(async () => {
@@ -122,11 +135,19 @@ export default function DemoPage() {
         candidates: { content: { parts: { text: string }[] } }[];
       };
       console.log("Gemini Flash raw response:", rawData);
+      console.log("Gemini Flash prompt:", isError);
+ 
       const parsedData = parseGeminiResponse(
         rawData.candidates[0].content.parts[0].text
       );
-      console.log("Parsed Gemini response:", parsedData);
+      if (parsedData.error != undefined) {
+        setIsError(true);
+      } else {
+        setIsError(false);
+      }
+
       setResults(parsedData);
+
       setDisplayName(startupName);
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -138,6 +159,23 @@ export default function DemoPage() {
       setLoading(false);
     }
   }, [startupName]);
+
+  function getLetterGrade(score: number): string {
+    if (score >= 97) return "A+";
+    if (score >= 93) return "A";
+    if (score >= 90) return "A-";
+    if (score >= 87) return "B+";
+    if (score >= 83) return "B";
+    if (score >= 80) return "B-";
+    if (score >= 77) return "C+";
+    if (score >= 73) return "C";
+    if (score >= 70) return "C-";
+    if (score >= 67) return "D+";
+    if (score >= 63) return "D";
+    if (score >= 60) return "D-";
+    return "F";
+  }
+
 
   return (
     <div className=" bg-background text-foreground flex flex-col">
@@ -152,23 +190,39 @@ export default function DemoPage() {
           Enter a startup name below and see how our AI instantly generates market
           insights.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 mb-8 w-full max-w-xl">
-          <Input
-            type="text"
-            placeholder="Enter Startup Idea"
-            value={startupName}
-            onChange={(e) => setStartupName(e.target.value)}
-            className="flex-1 h-10 bg-muted "
-          />
+        <div className="flex flex-row gap-2 mb-8 w-full max-w-xl">
+          <div className="flex flex-col w-full">
+            <Input
+              type="text"
+              placeholder="Enter Startup Idea"
+              value={startupName}
+              onChange={(e) => {
+                if (e.target.value.length <= 50) {
+                  setStartupName(e.target.value);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !loading) {
+                  handleGetInsights();
+                }
+              }}
+              className="h-10 bg-muted"
+            />
+            <div className="text-xs text-foreground text-left mt-1">
+              {startupName.length}/50 characters
+            </div>
+          </div>
+
           <Button
             onClick={handleGetInsights}
             disabled={loading}
             size="lg"
-            className="h-10"
+            className="h-10 self-start sm:self-auto"
           >
             {loading ? "Analyzing..." : "Get Insights"}
           </Button>
         </div>
+
 
         {/* Loading Spinner */}
         {loading && (
@@ -186,7 +240,7 @@ export default function DemoPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
                 transition={{ duration: 0.5 }}
-                className="mt-4 text-lg text-gray-600"
+                className="mt-4 text-lg text-foreground"
               >
                 {loaderPhrases[currentPhraseIndex]}
               </motion.p>
@@ -194,9 +248,13 @@ export default function DemoPage() {
           </motion.div>
         )}
 
+ 
+
 
         {/* Animated Results - Controlled by the Parent Container */}
         {results && (
+          <>
+          {!isError ? (
           <motion.div
             initial="hidden"
             animate="visible"
@@ -204,30 +262,61 @@ export default function DemoPage() {
             className="max-w-xl w-full"
           >
             <Card>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-2">
                 <motion.h2 variants={itemVariants} className="text-2xl font-bold">
-                  Market Insights for {displayName}
+                  {displayName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                 </motion.h2>
-                <motion.div variants={itemVariants}>
-                  <AnimatedBar label="TAM" value={results.tam} percentage={100} />
+
+                <div className="flex flex-row">
+                <motion.div variants={itemVariants} className="flex flex-col items-center">
+                  <p className="text-sm font-medium mb-0">TAM: {results.tam}</p>
+                  <GaugeChart grade={getLetterGrade(results.tamEvaluation)} />
                 </motion.div>
-                <motion.div variants={itemVariants}>
-                  <AnimatedBar label="SAM" value={results.sam} percentage={50} />
+                <motion.div variants={itemVariants} className="flex flex-col items-center">
+                  <p className="text-sm font-medium mb-0">SAM: {results.sam}</p>
+                  <GaugeChart grade={getLetterGrade(results.samEvaluation)} />
                 </motion.div>
-                <motion.div variants={itemVariants}>
-                  <AnimatedBar label="SOM" value={results.som} percentage={10} />
+                <motion.div variants={itemVariants} className="flex flex-col items-center">
+                  <p className="text-sm font-medium mb-0">SOM: {results.som}</p>
+                  <GaugeChart grade={getLetterGrade(results.somEvaluation)} />
                 </motion.div>
-                <motion.div variants={itemVariants} className="flex justify-center">
+                
+                <motion.div variants={itemVariants} className="flex flex-col items-center">
+                  <p className="text-sm font-medium mb-0">OVR GRADE:</p>
                   <GaugeChart grade={results.startupGrade} />
                 </motion.div>
+                </div>
+
                 <motion.div variants={itemVariants} className="text-left space-y-2">
                   <p>
                     <strong>Competitor Insight:</strong> {results.competitor}
                   </p>
                 </motion.div>
+                <motion.div variants={itemVariants} className="text-left space-y-2">
+                  <p>
+                    <strong>Trend Analysis:</strong> {results.trend}
+                  </p>
+                </motion.div>
               </CardContent>
             </Card>
           </motion.div>
+          ) : (
+            <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
+            className="max-w-xl w-full"
+          >
+            <Card>
+              <CardContent className="space-y-2">
+                <motion.h2 variants={itemVariants} className="text-2xl font-bold">
+                  {results.error}
+                </motion.h2>
+              </CardContent>
+            </Card>
+          </motion.div>
+          )}
+          </>
         )}
       </main>
 

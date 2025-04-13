@@ -15,7 +15,7 @@ export default function Home() {
       <main className="flex-1 flex flex-col items-center justify-center px-4 text-center bg-gradient-to-b from-muted/40 to-background pb-16 pt-12">
         <Badge className="mb-4" variant="secondary">Powered by Google Gemini + Next.js</Badge>
         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl text-primary">
-          Validate Market Potential in Seconds
+          Verify Market Potential in Seconds
         </h1>
         <p className="text-lg text-muted-foreground max-w-xl mb-8">
           Instantly generate TAM/SAM/SOM insights, benchmark competitors, and grade startup ideas with AI.
@@ -37,7 +37,7 @@ export default function Home() {
         <div className="max-w-5xl mx-auto text-center mb-12">
           <h2 className="text-3xl font-bold mb-4 text-primary">What You&apos;ll Get</h2>
           <p className="text-muted-foreground text-lg">
-            A full-stack market research engine that VCs will love.
+            A full-stack market research engine that VCs love.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -51,8 +51,8 @@ export default function Home() {
               desc: "Score your idea across defensibility, scale, timing, and more.",
             },
             {
-              title: "Competitor Intelligence",
-              desc: "Get side-by-side comparisons, traction stats, and differentiation.",
+              title: "Competitor Analysis",
+              desc: "Get instant research, traction stats, and differentiation opportunities.",
             },
           ].map(({ title, desc }) => (
             <Card key={title} className="bg-card shadow-md">

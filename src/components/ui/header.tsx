@@ -7,7 +7,7 @@ import VerifAILogo from '@/components/svg/verifailogo';
 
 const Header: React.FC = () => {
   return (
-    <header className="py-6 px-8">
+    <header className="py-6 px-8 z-10">
       <nav className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Link href="/">
@@ -15,15 +15,15 @@ const Header: React.FC = () => {
           </Link>
         </div>
         <div className="flex gap-4 text-lg">
-          <a href="#features" className="hover:text-primary transition-colors">
+          <Link href="#features" className="hover:text-primary transition-colors">
             Features
-          </a>
-          <a href="#investors" className="hover:text-primary transition-colors">
-            Why It Wins
-          </a>
-          <a href="#contact" className="hover:text-primary transition-colors">
-            Contact
-          </a>
+          </Link>
+          <Link href="#investors" className="hover:text-primary transition-colors">
+            What we Offer
+          </Link>
+          <Link href="/demo" className="hover:text-primary transition-colors">
+            Try the Demo
+          </Link>
         </div>
       </nav>
     </header>
