@@ -28,30 +28,7 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
-type AnimatedBarProps = {
-  label: string;
-  value: string;
-  percentage: number;
-};
 
-const AnimatedBar = ({ label, value, percentage }: AnimatedBarProps) => {
-  return (
-    <div className="mb-4">
-      <div className="flex justify-between mb-1">
-        <span className="text-sm font-medium">{label}</span>
-        <span className="text-sm font-medium">{value}</span>
-      </div>
-      <div className="w-full bg-gray-300 rounded-full h-2.5 dark:bg-gray-700">
-        <motion.div
-          className="bg-indigo-600 h-2.5 rounded-full"
-          initial={{ width: 0 }}
-          animate={{ width: `${percentage}%` }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-        />
-      </div>
-    </div>
-  );
-};
 
 // Helper function to parse Gemini's response string.
 // It removes markdown code fences and parses the JSON.
@@ -108,9 +85,7 @@ export default function DemoPage() {
     error?: string;
     trend: string;
   } | null>(null);
-  const [parsedTAM, setParsedTAM] = useState<number>(1);
-  const [parsedSAM, setParsedSAM] = useState<number>(1);
-  const [parsedSOM, setParsedSOM] = useState<number>(1);
+
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {
@@ -135,7 +110,6 @@ export default function DemoPage() {
         candidates: { content: { parts: { text: string }[] } }[];
       };
       console.log("Gemini Flash raw response:", rawData);
-      console.log("Gemini Flash prompt:", isError);
  
       const parsedData = parseGeminiResponse(
         rawData.candidates[0].content.parts[0].text
