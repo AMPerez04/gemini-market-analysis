@@ -1,29 +1,29 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { useCallback, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+
 import { GaugeChart } from "./components/GaugeChart";
 import generateContent from "./api/geminiapi";
+import { generatePrompt } from "./api/generatePrompt";
 
-// Container and item variants for general fade and staggered animations.
+// Updated container variants to stagger children one at a time.
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      delayChildren: 0.3,
-      staggerChildren: 0.2,
+      staggerChildren: 0.3, // each child appears 1.0 seconds apart
     },
   },
 };
 
+// Updated item variants: start above (y: -20) and drop into place.
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: -20 },
   visible: { opacity: 1, y: 0 },
 };
 
@@ -44,8 +44,7 @@ const AnimatedBar = ({ label, value, percentage }: AnimatedBarProps) => {
         <motion.div
           className="bg-indigo-600 h-2.5 rounded-full"
           initial={{ width: 0 }}
-          whileInView={{ width: `${percentage}%` }}
-          viewport={{ once: true }}
+          animate={{ width: `${percentage}%` }}
           transition={{ duration: 1.5, ease: "easeOut" }}
         />
       </div>
@@ -54,7 +53,7 @@ const AnimatedBar = ({ label, value, percentage }: AnimatedBarProps) => {
 };
 
 // Helper function to parse Gemini's response string.
-// It removes the markdown code fences (```json and ```) and parses the JSON.
+// It removes markdown code fences and parses the JSON.
 function parseGeminiResponse(
   responseText: string
 ): {
@@ -75,10 +74,22 @@ function parseGeminiResponse(
   }
 }
 
+const loaderPhrases = [
+  "Evaluating your idea...",
+  "Performing market research...",
+  "Crunching numbers...",
+  "Optimizing outcomes...",
+  "Analyzing competitors...",
+  "Generating insights...",
+  "Assessing potential...",
+  "Validating market fit...",
+];
+
 export default function DemoPage() {
   // State for user input and insights.
   const [startupName, setStartupName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const [results, setResults] = useState<{
     tam: string;
     sam: string;
@@ -87,40 +98,32 @@ export default function DemoPage() {
     startupGrade: string;
   } | null>(null);
 
+  useEffect(() => {
+    if (!loading) return;
+    const interval = setInterval(() => {
+      setCurrentPhraseIndex((prevIndex) => (prevIndex + 1) % loaderPhrases.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [loading]);
+  
+
   // Memoized function to get insights from Gemini.
   const handleGetInsights = useCallback(async () => {
     if (!startupName.trim()) return;
     setLoading(true);
     setResults(null);
 
-    // Construct a Gemini prompt to analyze the startup.
-    const prompt = `You are a seasoned market research expert. Analyze the startup "${startupName}" and provide market insights. Consider the following:
-1. Total Addressable Market (TAM): Estimate the overall revenue opportunity, formatted as a value like "1B" if in billions.
-2. Serviceable Available Market (SAM): Estimate the portion of TAM that is realistically addressable (e.g., "500M" for 500 million).
-3. Serviceable Obtainable Market (SOM): Estimate the share of SAM the startup can obtain, formatted similarly.
-4. Competitor Analysis: Briefly describe major competitors or the competitive landscape.
-5. Startup Grade: Based on potential, risk, and innovation, assign a grade on a scale from F to A+.
-
-Return your output strictly as JSON with exactly these keys:
-{
-  "tam": "<TAM value>",
-  "sam": "<SAM value>",
-  "som": "<SOM value>",
-  "competitor": "<Competitor analysis>",
-  "startupGrade": "<Letter grade (e.g., A+)>"
-}
-Only output the JSON without any extra commentary.
-Do not include any markdown code fences or other formatting.`;
+    const prompt = generatePrompt(startupName);
 
     try {
-      const rawData = await generateContent([{ text: prompt }]) as any;
+      const rawData = (await generateContent([{ text: prompt }])) as {
+        candidates: { content: { parts: { text: string }[] } }[];
+      };
       console.log("Gemini Flash raw response:", rawData);
-      // Parse the text response (with markdown formatting) into JSON.
-      const parsedData = parseGeminiResponse(rawData.candidates[0].content.parts[0].text);
+      const parsedData = parseGeminiResponse(
+        rawData.candidates[0].content.parts[0].text
+      );
       console.log("Parsed Gemini response:", parsedData);
-      console.log("Parsed Gemini Flash response:", parsedData);
-
-      
       setResults(parsedData);
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -128,36 +131,14 @@ Do not include any markdown code fences or other formatting.`;
       } else {
         console.error("Unexpected error:", error);
       }
-      // Optionally update state to indicate an error.
     } finally {
       setLoading(false);
     }
   }, [startupName]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
-      {/* Header */}
-      <header className="py-6 px-8">
-        <nav className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Image src="/next.svg" alt="Logo" width={40} height={40} />
-            <span className="text-lg font-bold tracking-tight">
-              InsightSpark AI
-            </span>
-          </div>
-          <div className="flex gap-4 text-sm">
-            <Link href="/" className="hover:text-primary transition-colors">
-              Home
-            </Link>
-            <Link href="/demo" className="hover:text-primary transition-colors">
-              Demo
-            </Link>
-            <Link href="/contact" className="hover:text-primary transition-colors">
-              Contact
-            </Link>
-          </div>
-        </nav>
-      </header>
+    <div className=" bg-background text-foreground flex flex-col">
+
 
       {/* Demo Main Content */}
       <main className="flex-1 flex flex-col items-center justify-center px-4 text-center">
@@ -171,61 +152,72 @@ Do not include any markdown code fences or other formatting.`;
         <div className="flex flex-col sm:flex-row gap-4 mb-8 w-full max-w-md">
           <Input
             type="text"
-            placeholder="Enter Startup Name"
+            placeholder="Enter Startup Idea"
             value={startupName}
             onChange={(e) => setStartupName(e.target.value)}
-            className="flex-1"
+            className="flex-1 h-10"
           />
-          <Button onClick={handleGetInsights} disabled={loading} size="lg">
+          <Button
+            onClick={handleGetInsights}
+            disabled={loading}
+            size="lg"
+            className="h-10"
+          >
             {loading ? "Analyzing..." : "Get Insights"}
           </Button>
         </div>
 
-        {/* Animated Results */}
+        {/* Loading Spinner */}
+        {loading && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col justify-center items-center mb-8"
+          >
+            <div className="w-12 h-12 border-4 border-t-4 border-gray-300 border-t-indigo-600 rounded-full animate-spin" />
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={loaderPhrases[currentPhraseIndex]}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.5 }}
+                className="mt-4 text-lg text-gray-600"
+              >
+                {loaderPhrases[currentPhraseIndex]}
+              </motion.p>
+            </AnimatePresence>
+          </motion.div>
+        )}
+
+
+        {/* Animated Results - Controlled by the Parent Container */}
         {results && (
           <motion.div
             initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }}
+            animate="visible"
             variants={containerVariants}
             className="max-w-md w-full"
           >
             <Card>
               <CardContent className="space-y-4">
-                <motion.h2
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={itemVariants}
-                  className="text-2xl font-bold"
-                >
+                <motion.h2 variants={itemVariants} className="text-2xl font-bold">
                   Market Insights for {startupName}
                 </motion.h2>
-
-                {/* Animated Bar Graphs for TAM, SAM, SOM */}
-                <AnimatedBar label="TAM" value={results.tam} percentage={100} />
-                <AnimatedBar label="SAM" value={results.sam} percentage={50} />
-                <AnimatedBar label="SOM" value={results.som} percentage={10} />
-
-                {/* Gauge Chart for the Startup Grade */}
-                <motion.div
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={itemVariants}
-                  className="flex justify-center"
-                >
+                <motion.div variants={itemVariants}>
+                  <AnimatedBar label="TAM" value={results.tam} percentage={100} />
+                </motion.div>
+                <motion.div variants={itemVariants}>
+                  <AnimatedBar label="SAM" value={results.sam} percentage={50} />
+                </motion.div>
+                <motion.div variants={itemVariants}>
+                  <AnimatedBar label="SOM" value={results.som} percentage={10} />
+                </motion.div>
+                <motion.div variants={itemVariants} className="flex justify-center">
                   <GaugeChart grade={results.startupGrade} />
                 </motion.div>
-
-                {/* Additional Text Results */}
-                <motion.div
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={itemVariants}
-                  className="text-left space-y-2"
-                >
+                <motion.div variants={itemVariants} className="text-left space-y-2">
                   <p>
                     <strong>Competitor Insight:</strong> {results.competitor}
                   </p>
@@ -236,23 +228,6 @@ Do not include any markdown code fences or other formatting.`;
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="py-6 px-8 border-t mt-12">
-        <div className="flex flex-col sm:flex-row items-center justify-between max-w-5xl mx-auto text-sm text-muted-foreground">
-          <span>© {new Date().getFullYear()} InsightSpark. All rights reserved.</span>
-          <div className="flex gap-4 mt-2 sm:mt-0">
-            <a href="https://nextjs.org" className="hover:underline">
-              Next.js
-            </a>
-            <a href="https://ui.shadcn.com" className="hover:underline">
-              shadcn/ui
-            </a>
-            <a href="https://tailwindcss.com" className="hover:underline">
-              Tailwind CSS
-            </a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
