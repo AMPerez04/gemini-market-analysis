@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { GaugeChart } from "./components/GaugeChart";
 import generateContent from "./api/geminiapi";
 import { generatePrompt } from "./api/generatePrompt";
+import FreeformBackground from "@/components/ui/FreeformBackground";
 
 // Updated container variants to stagger children one at a time.
 const containerVariants = {
@@ -88,6 +89,7 @@ const loaderPhrases = [
 export default function DemoPage() {
   // State for user input and insights.
   const [startupName, setStartupName] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [loading, setLoading] = useState(false);
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const [results, setResults] = useState<{
@@ -125,6 +127,7 @@ export default function DemoPage() {
       );
       console.log("Parsed Gemini response:", parsedData);
       setResults(parsedData);
+      setDisplayName(startupName);
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error("Error generating content:", error.message);
@@ -138,24 +141,24 @@ export default function DemoPage() {
 
   return (
     <div className=" bg-background text-foreground flex flex-col">
-
+      <FreeformBackground primaryColor="#3b82f6" />
 
       {/* Demo Main Content */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 text-center">
+      <main className="flex-1 flex flex-col items-center justify-center px-4 text-center relative z-10">
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
           Experience Market Research in Action
         </h1>
-        <p className="text-lg text-muted-foreground max-w-xl mb-8">
+        <p className="text-lg text-foreground max-w-xl mb-8">
           Enter a startup name below and see how our AI instantly generates market
           insights.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 mb-8 w-full max-w-md">
+        <div className="flex flex-col sm:flex-row gap-4 mb-8 w-full max-w-xl">
           <Input
             type="text"
             placeholder="Enter Startup Idea"
             value={startupName}
             onChange={(e) => setStartupName(e.target.value)}
-            className="flex-1 h-10"
+            className="flex-1 h-10 bg-muted "
           />
           <Button
             onClick={handleGetInsights}
@@ -198,12 +201,12 @@ export default function DemoPage() {
             initial="hidden"
             animate="visible"
             variants={containerVariants}
-            className="max-w-md w-full"
+            className="max-w-xl w-full"
           >
             <Card>
               <CardContent className="space-y-4">
                 <motion.h2 variants={itemVariants} className="text-2xl font-bold">
-                  Market Insights for {startupName}
+                  Market Insights for {displayName}
                 </motion.h2>
                 <motion.div variants={itemVariants}>
                   <AnimatedBar label="TAM" value={results.tam} percentage={100} />

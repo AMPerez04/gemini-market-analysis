@@ -27,7 +27,7 @@ interface ContentPart {
   ): Promise<GeminiResponse> {
     // It's recommended to store your API key in environment variables.
     const apiKey = process.env.NEXT_PUBLIC_GEMINI_FLASH_API_KEY || "badapikey";
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-thinking-exp-01-21:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
     const requestBody: GenerateContentRequest = {
       contents: [
