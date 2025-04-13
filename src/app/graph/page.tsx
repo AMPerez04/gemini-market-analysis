@@ -6,7 +6,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import dynamic from "next/dynamic";
-import * as d3 from "d3"; // we need this to configure the forces
 
 // Dynamically load ForceGraph2D on the client.
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), { ssr: false });
@@ -168,8 +167,23 @@ export default function DemoPage() {
           <section className="w-full max-w-4xl mt-12">
             <h2 className="text-3xl font-bold mb-4">Dynamic Gemini Graph</h2>
             <div className="border border-gray-300 h-[70vh]">
-         
-            </div>
+  <ForceGraph2D
+    ref={fgRef}
+    graphData={graphData}
+    nodeId="id"
+    nodeLabel={(node) => `${(node as GraphNode).id}: ${(node as GraphNode).note}`}
+    nodeAutoColorBy="connectionType"
+    linkColor={(link) => {
+      const graphLink = link as GraphLink;
+      if (graphLink.type === "primary") return "red";
+      if (graphLink.type === "secondary") return "orange";
+      return "gray";
+    }}
+    linkDirectionalParticles={2}
+    linkDirectionalParticleSpeed={0.005}
+  />
+</div>
+
           </section>
         )}
       </main>
