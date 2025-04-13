@@ -43,13 +43,13 @@ export default function RootLayout({
           `}
         </style>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="flex min-h-screen flex-col">
-        <BlobBackground />
-        <Header />
-        <div className="flex flex-1 items-center justify-center">
-          <main className="w-full">{children}</main>
-        </div>
-        <Footer />
+          <div className="relative flex min-h-screen flex-col">
+            <BlobBackground />
+            <Header />
+            <div className="flex flex-1 items-center justify-center">
+              <main className="w-full">{children}</main>
+            </div>
+            <Footer />
           </div>
         </ThemeProvider>
       </body>

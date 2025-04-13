@@ -17,7 +17,7 @@ export default function Home() {
 
       {/* Hero Section */}
       <main className="flex-1 flex flex-col items-center justify-center px-4 text-center  pb-16 pt-12 z-10">
-        <Badge className="mb-4" variant="secondary">Powered by Google Gemini + Next.js</Badge>
+        <Badge className="mb-4" variant="default">Powered by Google Gemini + Next.js</Badge>
         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl text-primary">
           Verify Market Potential in Seconds
         </h1>
@@ -73,7 +73,7 @@ export default function Home() {
       <section id="investors" className="py-24 px-8 text-center z-10">
         <h2 className="text-3xl font-bold mb-4 text-primary">Tailored for Investors & Innovation Teams</h2>
         <p className="text-muted-foreground max-w-2xl mx-auto mb-8 text-lg">
-          VerifAI isn’t just a tool — it’s a pitch-perfect launchpad designed to accelerate internal validation and make due diligence effortless.
+          VerifAI isn’t just a tool, it’s a pitch-perfect launchpad designed to accelerate internal validation and make due diligence effortless.
         </p>
       </section>
 
