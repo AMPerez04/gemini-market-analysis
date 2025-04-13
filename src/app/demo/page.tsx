@@ -108,7 +108,9 @@ export default function DemoPage() {
 
   // Memoized function to get insights from Gemini.
   const handleGetInsights = useCallback(async () => {
-    if (!startupName.trim()) return;
+  
+    if (typeof startupName !== "string" || !startupName.trim()) return;
+
     setLoading(true);
     setResults(null);
 
