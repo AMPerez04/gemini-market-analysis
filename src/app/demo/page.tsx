@@ -161,6 +161,7 @@ export default function DemoPage() {
     return "F";
   }
 
+  // Function to parse further research links.
 
   const furtherResearchLinks = (researchLinks: unknown) => {
     if (typeof researchLinks !== "string") return [];
